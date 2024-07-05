@@ -7,10 +7,10 @@ uses System.Sensors;
 type
   TMaps = class sealed
   private
-    function OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
+    class function OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
   public
-    function OpenNavigation(const AQuery: string): Boolean; overload;
-    function OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean; overload;
+    class function OpenNavigation(const AQuery: string): Boolean; overload;
+    class function OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean; overload;
   end;
 
 implementation
@@ -48,7 +48,7 @@ uses
 
 {TMaps}
 
-function TMaps.OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
+class function TMaps.OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
 {$IFDEF ANDROID}
 var
   LIntent: JIntent;
@@ -108,19 +108,16 @@ end;
 {$ENDIF IOS}
 {$ENDIF ANDROID}
 
-
-
-function TMaps.OpenNavigation(const AQuery: string): Boolean;
+class function TMaps.OpenNavigation(const AQuery: string): Boolean;
 var
   LCoord: TLocationCoord2D;
 begin
   LCoord.Latitude := 0.0;
   LCoord.Longitude := 0.0;
-  OpenNavigation(AQuery, LCoord);
+  Result := OpenNavigation(AQuery, LCoord);
 end;
 
-
-function TMaps.OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean;
+class function TMaps.OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean;
 var
   LCoordString: String;
 begin
@@ -134,20 +131,25 @@ begin
   else begin
     LCoordString := '';
   end;
+
+  {$IFDEF IOS}
   if not OpenURL('comgooglemaps://?daddr=' + AQuery) then
   begin
+  {$ENDIF}
+
     if (0.0 < LCoordString.Length) then
     begin
       Result := OpenURL('http://maps.apple.com/?daddr=' + AQuery + '&saddr=loc:' + LCoordString);
     end
-    else begin
+    else
+    begin
       Result := OpenURL('http://maps.apple.com/?daddr=' + AQuery);
     end;
-  end
-  else begin
-    Result := True;
+ {$IFDEF IOS}
   end;
-  {$ENDIF}
+ {$ENDIF}
+
+ {$ENDIF}
 end;
 
 end.
