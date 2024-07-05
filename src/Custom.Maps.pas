@@ -7,10 +7,10 @@ uses System.Sensors;
 type
   TMaps = class sealed
   private
-    function OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
+    class function OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
   public
-    function OpenNavigation(const AQuery: string): Boolean; overload;
-    function OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean; overload;
+    class function OpenNavigation(const AQuery: string): Boolean; overload;
+    class function OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean; overload;
   end;
 
 implementation
@@ -48,7 +48,7 @@ uses
 
 {TMaps}
 
-function TMaps.OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
+class function TMaps.OpenURL(const AURL: string; const ADisplayError: Boolean = False): Boolean;
 {$IFDEF ANDROID}
 var
   LIntent: JIntent;
@@ -108,9 +108,7 @@ end;
 {$ENDIF IOS}
 {$ENDIF ANDROID}
 
-
-
-function TMaps.OpenNavigation(const AQuery: string): Boolean;
+class function TMaps.OpenNavigation(const AQuery: string): Boolean;
 var
   LCoord: TLocationCoord2D;
 begin
@@ -119,8 +117,7 @@ begin
   OpenNavigation(AQuery, LCoord);
 end;
 
-
-function TMaps.OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean;
+class function TMaps.OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean;
 var
   LCoordString: String;
 begin
