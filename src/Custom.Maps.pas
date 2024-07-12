@@ -25,6 +25,7 @@ uses
   , Androidapi.JNI.GraphicsContentViewText
   , Androidapi.JNI.Net
   , Androidapi.JNI.JavaTypes
+  , Androidapi.Jni.App
   , Androidapi.Helpers;
 {$ELSE}
 {$IFDEF IOS}
@@ -54,14 +55,14 @@ var
   LIntent: JIntent;
 begin
   LIntent := TJIntent.JavaClass.init(TJIntent.JavaClass.ACTION_VIEW,
-    TJnet_Uri.JavaClass.parse(StringToJString(URL)));
+    TJnet_Uri.JavaClass.parse(StringToJString(AURL)));
   try
-    SharedActivity.startActivity(LIntent);
+    TAndroidHelper.Activity.startActivity(LIntent);
     Result := True;
   except
     on e: Exception do
     begin
-      if DisplayError then
+      if ADisplayError then
         ShowMessage('Error: ' + e.Message);
       Result := False;
     end;
@@ -72,13 +73,13 @@ end;
 var
   NSU: NSUrl;
 begin
-  NSU := StrToNSUrl(URL);
+  NSU := StrToNSUrl(AURL);
   if SharedApplication.canOpenURL(NSU) then
     Result := SharedApplication.openUrl(NSU)
   else
   begin
-    if DisplayError then
-      ShowMessage('Error: Opening "' + URL + '" not supported.');
+    if ADisplayError then
+      ShowMessage('Error: Opening "' + AURL + '" not supported.');
     Result := False;
   end;
 end;
@@ -118,11 +119,13 @@ begin
 end;
 
 class function TMaps.OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean;
+ {$IF NOT DEFINED(ANDROID)}
 var
   LCoordString: String;
+{$ENDIF}
 begin
   {$IFDEF ANDROID}
-  Result := OpenURL('http://maps.google.com/?q=' + Q);
+  Result := OpenURL('http://maps.google.com/?q=' + AQuery);
   {$ELSE}
   if (ACoord.Latitude <> 0.0) or (ACoord.Longitude <> 0.0) then
   begin
@@ -146,7 +149,9 @@ begin
       Result := OpenURL('http://maps.apple.com/?daddr=' + AQuery);
     end;
  {$IFDEF IOS}
-  end;
+  end
+  else
+    Result := False;
  {$ENDIF}
 
  {$ENDIF}

@@ -241,6 +241,7 @@ uses
    Androidapi.Helpers,
    Androidapi.JNI.Net,
    Androidapi.JNI.Os,
+   Androidapi.Jni.Support,
    Androidapi.IOUtils;
 
 procedure wwEmail(
