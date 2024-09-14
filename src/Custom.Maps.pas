@@ -25,7 +25,7 @@ uses
   , Androidapi.JNI.GraphicsContentViewText
   , Androidapi.JNI.Net
   , Androidapi.JNI.JavaTypes
-  , Androidapi.Jni.App
+  , Androidapi.JNI.App
   , Androidapi.Helpers;
 {$ELSE}
 {$IFDEF IOS}
@@ -73,13 +73,13 @@ end;
 var
   NSU: NSUrl;
 begin
-  NSU := StrToNSUrl(AURL);
+  NSU := StrToNSUrl(URL);
   if SharedApplication.canOpenURL(NSU) then
     Result := SharedApplication.openUrl(NSU)
   else
   begin
-    if ADisplayError then
-      ShowMessage('Error: Opening "' + AURL + '" not supported.');
+    if DisplayError then
+      ShowMessage('Error: Opening "' + URL + '" not supported.');
     Result := False;
   end;
 end;
@@ -119,7 +119,7 @@ begin
 end;
 
 class function TMaps.OpenNavigation(const AQuery: string; const ACoord: TLocationCoord2D): Boolean;
- {$IF NOT DEFINED(ANDROID)}
+{$IF NOT DEFINED(ANDROID)}
 var
   LCoordString: String;
 {$ENDIF}
@@ -149,9 +149,7 @@ begin
       Result := OpenURL('http://maps.apple.com/?daddr=' + AQuery);
     end;
  {$IFDEF IOS}
-  end
-  else
-    Result := False;
+  end;
  {$ENDIF}
 
  {$ENDIF}
