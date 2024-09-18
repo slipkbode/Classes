@@ -71,15 +71,15 @@ end;
 {$ELSE}
 {$IFDEF IOS}
 var
-  NSU: NSUrl;
+  LNSU: NSUrl;
 begin
-  NSU := StrToNSUrl(URL);
-  if SharedApplication.canOpenURL(NSU) then
-    Result := SharedApplication.openUrl(NSU)
+  LNSU := StrToNSUrl(AURL);
+  if SharedApplication.canOpenURL(LNSU) then
+    Result := SharedApplication.openUrl(LNSU)
   else
   begin
-    if DisplayError then
-      ShowMessage('Error: Opening "' + URL + '" not supported.');
+    if ADisplayError then
+      ShowMessage('Error: Opening "' + AURL + '" not supported.');
     Result := False;
   end;
 end;
