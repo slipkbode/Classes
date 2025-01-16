@@ -127,7 +127,6 @@ begin
   {$IFDEF ANDROID}
   Result := OpenURL('http://maps.google.com/?q=' + AQuery);
   {$ELSE}
-  Result := False;
   if (ACoord.Latitude <> 0.0) or (ACoord.Longitude <> 0.0) then
   begin
     LCoordString := ACoord.Latitude.ToString + ',' + ACoord.Longitude.ToString;
@@ -137,6 +136,7 @@ begin
   end;
 
   {$IFDEF IOS}
+  Result := False;
   if not OpenURL('comgooglemaps://?daddr=' + AQuery) then
   begin
   {$ENDIF}
