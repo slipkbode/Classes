@@ -9,7 +9,6 @@ type
   THelperCanvas = class helper for TCanvas
   public
     function TextHeight(const AText: string; const AWidth: Single): Single; overload;
-  public
 
   end;
 implementation

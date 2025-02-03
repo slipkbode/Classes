@@ -1,8 +1,5 @@
 unit Custom.Email;
 {$define dynamicMessageUI}
-{$if Defined(Android) or Defined(ios)}
-{$define wwMobile}
-{$endif}
 
 interface
 {$ObjExportAll On}
@@ -20,16 +17,18 @@ uses
   System.Win.registry,
   {$endif}
 
-  {$ifdef macos}
-  Macapi.ObjectiveC, Macapi.Helpers,
+  {$ifdef osx}
+  Macapi.ObjectiveC,
+  Macapi.Helpers,
   Macapi.ObjCRuntime,
-  {$ifdef ios}
-  iOSapi.AssetsLibrary,
-  iOSapi.CocoaTypes, iOSapi.Helpers,
-  FMX.Helpers.iOS, iOSapi.MediaPlayer, iOSapi.Foundation, iOSapi.UIKit, iOSapi.CoreGraphics,
-  {$else}
-  macAPI.CocoaTypes,
+  Macapi.CocoaTypes,
+  Macapi.Foundation,
+  Macapi.AppKit,
   {$endif}
+  {$ifdef IOS}
+  iOSapi.AssetsLibrary,
+  iOSapi.CocoaTypes, iOSapi.Helpers, FMX.Platform.iOS, Macapi.ObjCRuntime,  Macapi.Helpers, Macapi.ObjectiveC,
+  FMX.Helpers.iOS, iOSapi.MediaPlayer, iOSapi.Foundation, iOSapi.UIKit, iOSapi.CoreGraphics,
   {$endif}
   FMX.Types,
   FMX.MediaLibrary, FMX.Controls,
@@ -471,8 +470,7 @@ end;
 {$endregion}
 
 {$region 'osx'}
-{$ifndef wwMobile}
-{$ifdef macos}
+{$ifdef osx}
 procedure wwEmail(
    const Recipients: Array of String;
    const ccRecipients: Array of String;
@@ -480,9 +478,13 @@ procedure wwEmail(
    subject, Content, AttachmentPath: string;
    mimeTypeStr: string = ''); //; Protocol: TwwMailProtocol=TwwMailProtocol.ole);
 begin
- // Currently does nothing in osx
+  var LMailUrl := Format('mailto:%s?subject=%s&body=%s',
+                         [TArray.ToString<String>(Recipients),
+                          Subject,
+                          Content]);
+
+  TNSWorkspace.Wrap(TNSWorkspace.OCClass.sharedWorkspace).openURL(StrToNSUrl(LMailUrl));
 end;
-{$endif}
 {$endif}
 {$endregion}
 
